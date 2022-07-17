@@ -44,6 +44,7 @@ public class UserBookingServiceImpl extends BaseService<UserBooking> implements 
     @Override
     public UserBookingDTO bookTicket(int showNumber, long phoneNo, List<String> selectedSeats, UserDTO loggedInUser) throws ValidationException {
         if(!isDuplicateBooking(showNumber, phoneNo)) {
+            logger.debug("Started to book ticktes for the show {}", showNumber);
             List<String> availableSeats;
             if (selectedSeats != null && !selectedSeats.isEmpty()) {
                 ShowDTO showDTO = showService.getShow(showNumber);
@@ -80,6 +81,7 @@ public class UserBookingServiceImpl extends BaseService<UserBooking> implements 
         if(userBookingOpt.isPresent()) {
             UserBooking userBooking = userBookingOpt.get();
             if(isEligibleToCancel(userBooking)) {
+                logger.debug("Started cancelling ticket");
                 showService.updateSeatCancellation(userBooking.getShowId(), userBooking.getUsrBookedSeats());
                 userBooking.setCancelled(true);
                 userBooking.setCancellationDateTime(LocalDateTime.now());

@@ -9,6 +9,9 @@ import com.nancy.booking.show.util.EntityTransformer;
 import com.nancy.booking.show.model.ShowDTO;
 import com.nancy.booking.show.model.UserBookingDTO;
 import com.nancy.booking.show.util.BookingUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +21,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class ShowServiceImpl extends BaseService<Show> implements ShowService {
+
+    private final Logger logger = LoggerFactory.getLogger(ShowServiceImpl.class);
+
     @Autowired
     ShowDAO showDAO;
 
@@ -31,6 +38,7 @@ public class ShowServiceImpl extends BaseService<Show> implements ShowService {
 
     @Override
     public ShowDTO setupShow(ShowDTO showDTO) {
+        logger.debug("Setting up show with show number {}", showDTO.getShowNumber());
         if(showDTO != null && BookingUtil.isNotEmpty(showDTO.getMovieName().name())) {
             Show show = EntityTransformer.toEntity(showDTO, new Show());
             return EntityTransformer.toDto(showDAO.save(show), new ShowDTO());
@@ -42,6 +50,7 @@ public class ShowServiceImpl extends BaseService<Show> implements ShowService {
     @Override
     public ShowDTO getShow(int showNo) {
         if(showNo > 0) {
+            logger.debug("Retrieving show details for show number {}", showNo);
             Optional<Show> showOptional = showDAO.findByShowNumber(showNo);
             if(showOptional.isPresent()) {
                 return EntityTransformer.toDto(showOptional.get(), new ShowDTO());
@@ -70,7 +79,7 @@ public class ShowServiceImpl extends BaseService<Show> implements ShowService {
     @Transactional
     @Override
     public UserBookingDTO updateSeatBooking(UserBooking userBooking, ShowDTO showDTO, List<String> selectedSeats) {
-
+        logger.debug("Updating available and booked seats during booking...");
         Show show = EntityTransformer.toEntity(showDTO, new Show());
 
         // Remove selected seats from available seats
@@ -96,6 +105,7 @@ public class ShowServiceImpl extends BaseService<Show> implements ShowService {
     @Override
     public void updateSeatCancellation(Show show, List<String> cancelledSeats) {
         if(cancelledSeats != null) {
+            logger.debug("Updating available and booked seats during cancellation...");
             // Release cancelled seats so that other users can book the seats
             show.getBookedSeats().removeAll(cancelledSeats);
             // Add cancelled seats to available seats
