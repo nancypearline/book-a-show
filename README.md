@@ -19,6 +19,6 @@ robert/robert <br/>
 michael/michael <br/>
 andrew/andres <br/>
 
-Please enter seat nuumbers separated by comma as below <br/>
+Please enter seat numbers separated by comma as below <br/>
 A0,A1,A2 - correct
 
