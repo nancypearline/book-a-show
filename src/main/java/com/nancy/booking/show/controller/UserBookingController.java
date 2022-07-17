@@ -4,8 +4,6 @@ import com.nancy.booking.show.model.UserBookingDTO;
 import com.nancy.booking.show.model.UserDTO;
 import com.nancy.booking.show.service.UserBookingService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +19,15 @@ public class UserBookingController {
     @Autowired
     UserBookingService userBookingService;
 
-    Logger logger = LoggerFactory.getLogger(UserBookingController.class);
-
+    /**
+     * Book ticket for a show
+     * @param showNumber
+     * @param phoneNo
+     * @param selectedSeats
+     * @param loggedInUser
+     * @return
+     * @throws ValidationException
+     */
     @PostMapping(value = "/bookTicket")
     public UserBookingDTO bookTicket(int showNumber, long phoneNo, String[] selectedSeats, UserDTO loggedInUser) throws ValidationException {
         List<String> selectedSeatsList = Arrays.asList(selectedSeats);
@@ -30,6 +35,12 @@ public class UserBookingController {
         return userBookingService.bookTicket(showNumber, phoneNo, selectedSeatsList, loggedInUser);
     }
 
+    /**
+     * Cancel a ticket
+     * @param ticketNo
+     * @param phoneNo
+     * @throws ValidationException
+     */
     @PostMapping(value = "/cancelTicket")
     public void cancelTicket(long ticketNo, long phoneNo) throws ValidationException {
         userBookingService.cancelTicket(ticketNo, phoneNo);

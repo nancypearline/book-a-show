@@ -8,13 +8,11 @@ import com.nancy.booking.show.entity.UserBooking;
 import com.nancy.booking.show.util.EntityTransformer;
 import com.nancy.booking.show.model.ShowDTO;
 import com.nancy.booking.show.model.UserBookingDTO;
-import com.nancy.booking.show.model.UserDTO;
 import com.nancy.booking.show.util.BookingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +32,8 @@ public class ShowServiceImpl extends BaseService<Show> implements ShowService {
     @Override
     public ShowDTO setupShow(ShowDTO showDTO) {
         if(showDTO != null && BookingUtil.isNotEmpty(showDTO.getMovieName().name())) {
-            showDAO.save(EntityTransformer.toEntity(showDTO, new Show()));
-            return showDTO;
+            Show show = EntityTransformer.toEntity(showDTO, new Show());
+            return EntityTransformer.toDto(showDAO.save(show), new ShowDTO());
         }
         return null;
     }
@@ -71,13 +69,8 @@ public class ShowServiceImpl extends BaseService<Show> implements ShowService {
 
     @Transactional
     @Override
-    public UserBookingDTO updateSeatBooking(ShowDTO showDTO, long phone, List<String> availableSeats, List<String> selectedSeats, UserDTO loggedInUser) {
+    public UserBookingDTO updateSeatBooking(UserBooking userBooking, ShowDTO showDTO, List<String> selectedSeats) {
 
-        UserBookingDTO userBookingDTO = UserBookingDTO.builder().userId(loggedInUser).usrBookedSeats(selectedSeats)
-                .createdDateTime(LocalDateTime.now()).lastUpdatedDateTime(LocalDateTime.now()).isCancelled(false)
-                .showId(showDTO).phoneNo(phone).bookingDateTime(LocalDateTime.now()).build();
-
-        UserBooking userBooking = userBookingDAO.save(EntityTransformer.toEntity(userBookingDTO, new UserBooking()));
         Show show = EntityTransformer.toEntity(showDTO, new Show());
 
         // Remove selected seats from available seats

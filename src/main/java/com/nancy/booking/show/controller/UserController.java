@@ -19,6 +19,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /**
+     * This method creates user during application startup(only for testing using in-memory db)
+     * @param userName
+     * @param userRole
+     * @param password
+     */
     public void createUser(String userName, String userRole, String password) {
         if(BookingUtil.isNotEmpty(userName) && BookingUtil.isNotEmpty(userRole) && BookingUtil.isNotEmpty(password)) {
             //TODO Encrypt and save password
@@ -32,6 +38,12 @@ public class UserController {
         }
     }
 
+    /**
+     * Finds a user
+     * @param userName
+     * @param password
+     * @return
+     */
     public UserDTO findUser(String userName, String password) {
         if(BookingUtil.isNotEmpty(userName) && BookingUtil.isNotEmpty(password)) {
             return userService.findUser(userName, password);

@@ -30,6 +30,15 @@ public class ShowController {
     @Autowired
     private ShowService showService;
 
+    /**
+     * Setup a show by ADMIN user
+     * @param movieName
+     * @param nBRows
+     * @param nbSeatsPerRow
+     * @param showNo
+     * @return
+     * @throws ValidationException
+     */
     @PostMapping(value = "/setupShow")
     public ShowDTO setupShow(Movie movieName, int nBRows, int nbSeatsPerRow, int showNo) throws ValidationException {
         if(BookingUtil.isNotEmpty(movieName.name()) && nBRows > 0 && nbSeatsPerRow > 0) {
@@ -55,6 +64,12 @@ public class ShowController {
         return null;
     }
 
+    /**
+     * Allocate seats for a show
+     * @param nBRows
+     * @param nbSeatsPerRow
+     * @return
+     */
     private List<String> allocateSeats(int nBRows, int nbSeatsPerRow) {
         List<String> totalSeatList = new ArrayList<>();
         int endAscii = nBRows + 65;
@@ -68,6 +83,11 @@ public class ShowController {
         return totalSeatList;
     }
 
+    /**
+     * Retrieve show details
+     * @param showNo
+     * @return
+     */
     @GetMapping(value="/getShowDetails")
     public ShowDTO retrieveShowDetails(int showNo) {
         if(showNo > 0) {
@@ -78,12 +98,21 @@ public class ShowController {
         return null;
     }
 
+    /**
+     * Provides list of all shows
+     * @return
+     */
     @GetMapping(value = "/findAllShows")
     public List<ShowDTO> listAllShows() {
         logger.debug("Retrieving details of all the shows");
         return showService.findAll();
     }
 
+    /**
+     * Check if show is setup in system already
+     * @param showNo
+     * @return
+     */
     public boolean checkifShowExists(int showNo) {
         if(showNo > 0) {
             return showService.isShowExists(showNo);

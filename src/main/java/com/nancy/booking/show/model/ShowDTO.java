@@ -32,7 +32,7 @@ public class ShowDTO implements Serializable {
 
     private int nbSeatsPerRow;
 
-    private List<String> bookedSeats;
+    private List<String> bookedSeats = new ArrayList<>();
 
     private List<String> availableSeats;
 

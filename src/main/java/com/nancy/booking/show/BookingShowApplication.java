@@ -138,7 +138,7 @@ public class BookingShowApplication implements ApplicationRunner {
 					formatter.format("%15s %15s %15s %100s\n", "Ticket #", "Show #", "Phone no", "Seats allocated");
 					formatter.format("%15d %15d %15d %100s\n", bookingDetails.getId(), bookingDetails.getShowId().getShowNumber(),
 							bookingDetails.getPhoneNo(), String.join(", ", bookingDetails.getUsrBookedSeats()));
-					System.out.println("YOUR TICKET IS CONFIRMED!!");
+					System.out.println("YOUR TICKET IS CONFIRMED!!. TICKET NO : " + bookingDetails.getId());
 					System.out.println(formatter);
 				} catch (ValidationException e) {
 					System.err.println(e.getMessage());

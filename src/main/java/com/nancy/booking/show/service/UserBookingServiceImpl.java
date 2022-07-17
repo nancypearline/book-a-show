@@ -29,7 +29,7 @@ public class UserBookingServiceImpl extends BaseService<UserBooking> implements 
         super(dao);
     }
 
-    Logger logger = LoggerFactory.getLogger(UserBookingService.class);
+    Logger logger = LoggerFactory.getLogger(UserBookingServiceImpl.class);
 
     @Autowired
     ShowService showService;
@@ -49,7 +49,13 @@ public class UserBookingServiceImpl extends BaseService<UserBooking> implements 
                 ShowDTO showDTO = showService.getShow(showNumber);
                 availableSeats = showDTO.getAvailableSeats();
                 if (availableSeats.containsAll(selectedSeats)) {
-                    return showService.updateSeatBooking(showDTO, phoneNo, availableSeats, selectedSeats, loggedInUser);
+
+                    UserBookingDTO userBookingDTO = UserBookingDTO.builder().userId(loggedInUser).usrBookedSeats(selectedSeats)
+                            .createdDateTime(LocalDateTime.now()).lastUpdatedDateTime(LocalDateTime.now()).isCancelled(false)
+                            .showId(showDTO).phoneNo(phoneNo).bookingDateTime(LocalDateTime.now()).build();
+
+                    UserBooking userBooking = userBookingDAO.save(EntityTransformer.toEntity(userBookingDTO, new UserBooking()));
+                    return showService.updateSeatBooking(userBooking, showDTO, selectedSeats);
                 } else {
                     logger.error("Please select available seats. One/More of the selected seat/s is unavailable");
                     throw new ValidationException("Please select available seats. One/More of the selected seat/s is unavailable");
@@ -91,9 +97,11 @@ public class UserBookingServiceImpl extends BaseService<UserBooking> implements 
     }
 
     private boolean isEligibleToCancel(UserBooking userBooking) {
-        LocalDateTime bookingDateTime = userBooking.getBookingDateTime();
-        Duration timeInBetween = Duration.between(bookingDateTime, LocalDateTime.now());
-        long cancellationMins = timeInBetween.toMinutes();
-        return cancellationMins <= cancellationWindow;
+        if(!userBooking.isCancelled()) {
+            LocalDateTime bookingDateTime = userBooking.getBookingDateTime();
+            Duration timeInBetween = Duration.between(bookingDateTime, LocalDateTime.now());
+            long cancellationMins = timeInBetween.toMinutes();
+            return cancellationMins <= cancellationWindow;
+        } return false;
     }
 }

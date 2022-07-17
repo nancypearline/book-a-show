@@ -31,7 +31,7 @@ public class Show extends BaseEntity{
     @ElementCollection
     @CollectionTable(name = "BOOKED_SEATS")
     @Column(name = "BOOKED_SEATS")
-    private List<String> bookedSeats;
+    private List<String> bookedSeats = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "AVAILABLE_SEATS")
